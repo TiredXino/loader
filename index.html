@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>k2 download</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e0e0e0;
+        }
+
+        .container {
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #0f3460, #533483);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            filter: brightness(0) invert(1);
+        }
+
+        h1 {
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            color: #b0b0b0;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .key-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #2a2a4a;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            background: #1a1a2e;
+            color: #ffffff;
+        }
+
+        .key-input:focus {
+            outline: none;
+            border-color: #533483;
+            box-shadow: 0 0 0 3px rgba(83, 52, 131, 0.2);
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #0f3460, #533483);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(83, 52, 131, 0.4);
+        }
+
+        .download-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .progress-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #2a2a4a;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #0f3460, #533483);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .progress-text {
+            color: #b0b0b0;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .status-message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #2a2a4a;
+            border-top: 3px solid #533483;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+
+
+        /* Light Theme Styles */
+        body.light-theme {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 50%, #667eea 100%);
+            color: #333;
+        }
+
+        body.light-theme .container {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .logo {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        body.light-theme h1 {
+            color: #333;
+        }
+
+        body.light-theme .subtitle {
+            color: #666;
+        }
+
+        body.light-theme .key-input {
+            background: white;
+            border: 2px solid #e1e5e9;
+            color: #333;
+        }
+
+        body.light-theme .key-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        body.light-theme .download-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        body.light-theme .download-btn:hover {
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        body.light-theme .progress-bar {
+            background: #e1e5e9;
+        }
+
+        body.light-theme .progress-fill {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        body.light-theme .progress-text {
+            color: #666;
+        }
+
+        body.light-theme .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="logo">
+            <img src="https://cdn-icons-png.flaticon.com/512/18005/18005287.png" alt="Download Icon">
+        </div>
+        <form id="downloadForm">
+            <input 
+                type="text" 
+                id="licenseKey" 
+                class="key-input" 
+                placeholder="Enter your license key"
+                autocomplete="off"
+                required
+            >
+            <button type="submit" id="downloadBtn" class="download-btn">
+                Download the loader
+            </button>
+        </form>
+
+        <div id="progressContainer" class="progress-container">
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <p id="progressText" class="progress-text">Initializing download...</p>
+        </div>
+
+        <div id="statusMessage" class="status-message"></div>
+    </div>
+
+    <script>
+        // Valid keys (in a real application, this would be server-side validation)
+        const validKeys = [
+            'xino',
+            'foqta',
+            'pyrri mi perra',
+            'UD-2024-EEEE-FFFF',
+            'UD-2024-GGGG-HHHH'
+        ];
+
+        const downloadForm = document.getElementById('downloadForm');
+        const licenseKeyInput = document.getElementById('licenseKey');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const statusMessage = document.getElementById('statusMessage');
+        // Theme functionality
+        let isDarkTheme = true;
+
+        downloadForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const key = licenseKeyInput.value.trim();
+            
+            if (!key) {
+                showError('Please enter a license key');
+                return;
+            }
+
+            if (validKeys.includes(key)) {
+                startDownload();
+            } else {
+                showError('Invalid license key. Please check your key and try again.');
+                licenseKeyInput.classList.add('shake');
+                setTimeout(() => {
+                    licenseKeyInput.classList.remove('shake');
+                }, 500);
+            }
+        });
+
+        function startDownload() {
+            // Hide form and show progress
+            downloadForm.style.display = 'none';
+            progressContainer.style.display = 'block';
+            
+            let progress = 0;
+            let isWaiting = false;
+            const progressMessages = [
+                'Validating license key...',
+                'Preparing download...',
+                'This can take a few minutes...',
+                'Downloading loader files...',
+                'Almost done...',
+                'Finalizing download...'
+            ];
+            
+            const interval = setInterval(() => {
+                if (!isWaiting) {
+                    progress += Math.random() * 15 + 5; // Random progress increment
+                    
+                    if (progress > 100) progress = 100;
+                    
+                    progressFill.style.width = progress + '%';
+                    
+                    const messageIndex = Math.floor((progress / 100) * progressMessages.length);
+                    const currentMessage = progressMessages[Math.min(messageIndex, progressMessages.length - 1)];
+                    progressText.textContent = currentMessage;
+                    
+                    // Check if we're at the "This can take a few minutes..." message
+                    if (currentMessage === 'This can take a few minutes...' && !isWaiting) {
+                        isWaiting = true;
+                        const waitTime = Math.random() * 5000 + 5000; // Random wait between 5-10 seconds
+                        
+                        setTimeout(() => {
+                            isWaiting = false;
+                        }, waitTime);
+                    }
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            completeDownload();
+                        }, 1000);
+                    }
+                }
+            }, 800);
+        }
+
+        function generateRandomName() {
+            const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < 12; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        function completeDownload() {
+            progressText.innerHTML = '<span class="loading-spinner"></span>Download completed!';
+            
+            setTimeout(() => {
+                // Generate random name for the loader
+                const randomName = generateRandomName();
+                
+                // Your GitHub release URL
+                const loaderUrl = 'https://github.com/TiredXino/loader/releases/download/hi/9d0sa345as.exe';
+                
+                // Create download link with random name
+                const link = document.createElement('a');
+                link.href = loaderUrl;
+                link.download = `${randomName}.exe`;
+                link.style.display = 'none';
+                
+                // Add to page and trigger download
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Show success message with random name
+                alert(`Download started! File will be saved as: ${randomName}.exe`);
+                
+                // Reset form after 3 seconds
+                setTimeout(() => {
+                    resetForm();
+                }, 3000);
+            }, 2000);
+        }
+
+        function showError(message) {
+            statusMessage.textContent = message;
+            statusMessage.className = 'status-message status-error';
+            statusMessage.style.display = 'block';
+            
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            statusMessage.textContent = message;
+            statusMessage.className = 'status-message status-success';
+            statusMessage.style.display = 'block';
+        }
+
+        function resetForm() {
+            downloadForm.style.display = 'block';
+            progressContainer.style.display = 'none';
+            progressFill.style.width = '0%';
+            licenseKeyInput.value = '';
+            statusMessage.style.display = 'none';
+        }
+
+        // Add some visual feedback for key input
+        licenseKeyInput.addEventListener('input', function() {
+            if (this.value.length > 0) {
+                this.style.borderColor = '#533483';
+            } else {
+                this.style.borderColor = '#2a2a4a';
+            }
+        });
+    </script>
+</body>
+</html>
